@@ -25,13 +25,12 @@ export class ArticlesService {
     return new ResponseBody(200, "Articles fetched successfully", allArticles)
   }
 
-  async createArticle(payload: CreateArticleDto, request: Request, file: Express.Multer.File) {
+  async createArticle(payload: CreateArticleDto, userId : number, file: Express.Multer.File) {
     try {
       const { content, description, title } = payload
       let image = file;
 
       if (!content || !description || !title) throw new BadRequestException('All fields are required')
-      let userId = request['user'].id;
       console.log(userId);
       const user = await this.userRepository.findOne({ where: { id: userId }, select: selectedFields })
       if (!user) throw new NotFoundException('User not found')
@@ -64,9 +63,8 @@ export class ArticlesService {
 
 
   //todo image change
-  async updateArticle(articleId: number, payload: UpdateArticleDto, request: Request, file : Express.Multer.File) {
+  async updateArticle(articleId: number, payload: UpdateArticleDto, userId: number, file : Express.Multer.File) {
     try {
-      let userId = request['user'].id;
       let updatedImage = file;
       const findArticle = await this.articleRepository.findOne({ where: { id: articleId }, select: { user: { id: true, name: true, username: true } }, 
       relations: ['user'], });
@@ -90,9 +88,8 @@ export class ArticlesService {
     }
   }
 
-  async removeArticle(articleId : number, request : Request) {
+  async removeArticle(articleId : number, userId : number) {
     try {
-      let userId = request['user'].id;
       const findUser = await this.userRepository.findOne({where : {id : userId}});
       //checking if the user exists
       if(!findUser) throw new NotFoundException('User not found');

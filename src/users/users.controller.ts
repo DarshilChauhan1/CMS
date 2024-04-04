@@ -21,7 +21,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Get('api/users/profile')
   getProfile(@Req() request: Request) {
-    return this.usersService.getUserProfile(request);
+    return this.usersService.getUserProfile(request['user'].id);
   }
 
   //get all the user articles
@@ -29,7 +29,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Get('api/users/articles')
   getAllUserArticles(@Req() request: Request) {
-    return this.usersService.getAllUserArticles(request);
+    return this.usersService.getAllUserArticles(request['user'].id);
   }
 
   //user profile upadate

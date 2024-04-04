@@ -44,9 +44,9 @@ export class UsersService {
   }
 
 
-  async getUserProfile(request: Request) {
+  async getUserProfile(id: number) {
     try {
-      let userId = request['user'].id;
+      let userId = id;
       if (!userId) throw new CustomError('User not found', 409, '/login');
 
       const getUserProfile = await this.userRepository.findOne({ where: { id: userId }, select: selectedFields });
@@ -59,9 +59,9 @@ export class UsersService {
     }
   }
 
-  async getAllUserArticles(request: Request) {
+  async getAllUserArticles(id : number) {
     try {
-      let userId = request['user'].id;
+      let userId = id;
       const findAllArticles = await this.articleRepository.find({ where: { user: { id: userId } } });
       // if there are no articles we return an empty array not thrrowing any error
       return new ResponseBody(200, "Articles fetched successfully", findAllArticles, true)

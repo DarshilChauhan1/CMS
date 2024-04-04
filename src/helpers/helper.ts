@@ -10,3 +10,14 @@ export class ResponseBody {
         this.success = success;
     }
 }
+
+export class UserIdExtracter {
+    private request : Request;
+    constructor(){}
+
+    extractUser(){
+        const userId = this.request['user'].id;
+        return userId
+    }
+
+}

@@ -20,49 +20,49 @@ export class AdminController {
   //dashboard
   @Get('dashboard')
   adminDashboard(@Req() request: Request) {
-    return this.adminService.adminDashborad(request)
+    return this.adminService.adminDashborad(request['user'].id)
   }
 
   //alluser
   // in this we will show all users data except password
   @Get('dashboard/users')
   getAllUsers(@Req() request: Request) {
-    return this.adminService.getAllUsers(request);
+    return this.adminService.getAllUsers(request['user'].id);
   }
 
   //delete user
   // can delete any user
   @Delete('dashboard/users/remove')
-  deleteUsers(@Body() payload: { users: string[] }, @Req() request: Request) {
-    return this.adminService.removeUsers(payload, request);
+  deleteUsers(@Body() payload: { users: string[] }) {
+    return this.adminService.removeUsers(payload);
   }
 
   //update user
   //can update any member
   @Put('dashboard/users/update')
   upadateUsers(@Body() payload: [{ id: string, updatePayload: UpdateUserDto }], @Req() request: Request) {
-    return this.adminService.updateUsers(payload, request);
+    return this.adminService.updateUsers(payload);
   }
 
 
   //get all articles
   @Get('dashboard/articles')
-  getAllArticles(@Req() request: Request) {
-    return this.adminService.getAllArticles(request);
+  getAllArticles() {
+    return this.adminService.getAllArticles();
   }
 
   //delete articles
   // can delete any article
   @Delete('dashboard/articles/remove')
-  deleteArticles(@Body() payload: { articles: string[] }, @Req() request: Request) {
-    return this.adminService.removeArticles(payload, request);
+  deleteArticles(@Body() payload: { articles: string[] }) {
+    return this.adminService.removeArticles(payload);
   }
 
   //update any article
   // can update any article 
   @Put('dashboard/articles/update')
-  updateArticles(@Body() payload: [{id : string, articlePayload : UpdateArticleDto}], @Req() request: Request) {
-    return this.adminService.updateArticles(payload, request);
+  updateArticles(@Body() payload: [{id : string, articlePayload : UpdateArticleDto}]) {
+    return this.adminService.updateArticles(payload);
   }
 
 }

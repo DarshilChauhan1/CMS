@@ -22,18 +22,18 @@ export class ArticlesController {
   @UseInterceptors(FileInterceptor('file', MulterCustomOptions))
   @Post('create') 
   createArticle(@Body() payload : CreateArticleDto, @Req() request : Request, @UploadedFile() file : Express.Multer.File ){
-    return this.articlesService.createArticle(payload, request, file);
+    return this.articlesService.createArticle(payload, request['user'].id, file);
   }
   //update article
   @UseInterceptors(FileInterceptor('file', MulterCustomOptions))
   @Put(':articleId')
   updateArticle(@Param('articleId') id: number, @Body() payload : UpdateArticleDto, @Req() request : Request, @UploadedFile() file : Express.Multer.File) {
-    return this.articlesService.updateArticle(id, payload, request, file);
+    return this.articlesService.updateArticle(id, payload, request['user'].id, file);
   }
 
   //delete article
   @Delete(':articleId')
   removeArticles(@Param('articleId') id: number, @Req() request : Request) {
-    return this.articlesService.removeArticle(id, request);
+    return this.articlesService.removeArticle(id, request['user'].id);
   }
 }

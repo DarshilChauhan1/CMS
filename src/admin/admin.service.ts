@@ -17,9 +17,8 @@ export class AdminService {
         @InjectRepository(Article) private readonly articleRepository: Repository<Article>,
         @InjectRepository(User) private readonly userRepository: Repository<User>) {}
 
-    async adminDashborad(request : Request) {
+    async adminDashborad(userId : number) {
         try {
-            let userId = request['user'].id;
 
             const user = await this.userRepository.findOne({where : {id : userId}, select : selectedFields});
             if(!user) throw new NotFoundException('User does not exits');
@@ -40,9 +39,8 @@ export class AdminService {
         }
     }
 
-    async getAllUsers(request : Request){
+    async getAllUsers(userId : number){
         try {
-            let userId = request['user'].id;
             const user = await this.userRepository.findOne({where : {id : userId}, select : selectedFields});
             if(!user) throw new NotFoundException('User does not exits');
             //getting all the users details
@@ -54,7 +52,7 @@ export class AdminService {
         }
     }
 
-    async removeUsers(payload : {users : string[]}, request : Request) {
+    async removeUsers(payload : {users : string[]}) {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.startTransaction();
         try {
@@ -72,7 +70,7 @@ export class AdminService {
         }
     }
 
-    async updateUsers(payload : [{id : string, updatePayload : UpdateUserDto}], request : Request) {
+    async updateUsers(payload : [{id : string, updatePayload : UpdateUserDto}]) {
         const queryRunner = this.dataSource.createQueryRunner();
         try {
             const userUpdateWithPayload = payload;
@@ -87,9 +85,8 @@ export class AdminService {
     }
 
 
-    async getAllArticles(request : Request){
+    async getAllArticles(){
         try {
-            let userId = request['user'].id;
             const allArticles = await this.articleRepository.find({select : {user : {id : true, username : true, name : true}},relations : ['user']});
             return new ResponseBody(200, "Articles fetched successfully", allArticles, true)
         } catch (error) {
@@ -97,7 +94,7 @@ export class AdminService {
         }
     }
 
-    async removeArticles(payload : {articles : string[]}, request : Request) {
+    async removeArticles(payload : {articles : string[]}) {
         let queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.startTransaction();
         try {
@@ -113,11 +110,10 @@ export class AdminService {
         }
     }
 
-    async updateArticles(payload : [{id : string, articlePayload : UpdateArticleDto}], request : Request) {
+    async updateArticles(payload : [{id : string, articlePayload : UpdateArticleDto}]) {
         let queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.startTransaction();
         try {
-            let userId = request['user'].id;
             for (const article of payload) {
                 await this.articleRepository.update({id : parseInt(article.id)}, {...article.articlePayload});
             }
