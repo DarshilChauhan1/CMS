@@ -25,6 +25,6 @@ export class Article {
     }
 
     @JoinColumn({name : 'user_id'})
-    @ManyToOne(() => User, (user) => user.articles)
-    user_id : User
+    @ManyToOne(() => User, (user) => user.articles, {onDelete : 'CASCADE'})
+    user : User
 }

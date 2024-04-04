@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Put, Query, UseFilters, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Put, Query, UseFilters, UseGuards, UseInterceptors, UploadedFile, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterCustomOptions } from 'src/common/config/multer.config';
 
 @UseFilters(ExceptionHandling)
+@UsePipes(ValidationPipe)
 @UseGuards(AuthGuard)
 @Controller('api/articles')
 export class ArticlesController {
@@ -15,7 +16,7 @@ export class ArticlesController {
 
   @Get()
   getAllArticles(@Query('search') search : string) {
-    
+    return this.articlesService.getAllArticles(search);
   }
   //create article
   @UseInterceptors(FileInterceptor('file', MulterCustomOptions))
@@ -24,14 +25,14 @@ export class ArticlesController {
     return this.articlesService.createArticle(payload, request, file);
   }
   //update article
-  @Put(':id')
-  updateArticle(@Param('id') id: string, @Body() payload : UpdateArticleDto) {
-    
+  @Put(':articleId')
+  updateArticle(@Param('articleId') id: string, @Body() payload : UpdateArticleDto, @Req() request : Request) {
+    return this.articlesService.updateArticle(id, payload, request);
   }
 
   //delete article
-  @Delete(':id')
-  removeArticles(@Param('id') id: string) {
-    
+  @Delete(':articleId')
+  removeArticles(@Param('articleId') id: string, @Req() request : Request) {
+    return this.articlesService.removeArticle(id, request);
   }
 }

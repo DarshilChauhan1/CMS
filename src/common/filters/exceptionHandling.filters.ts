@@ -10,9 +10,6 @@ export class ExceptionHandling implements ExceptionFilter{
         const exceptionResponse = exception instanceof HttpException ? exception.getResponse() : ""
 
         const httpStatus =  exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
-        console.log(exception)
-        console.log(httpStatus)
-       
         let responseBody = {
             statusCode : httpStatus,
             message : exceptionResponse['message'] ?  exceptionResponse['message'] : exception.message || "Something went wrong",

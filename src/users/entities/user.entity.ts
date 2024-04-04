@@ -25,6 +25,6 @@ export class User {
     @Column({type : 'enum', enum : RoleEnum, default : RoleEnum.USER})
     role : RoleEnum;
 
-    @OneToMany(() => Article, (article) => article.user_id)
+    @OneToMany(() => Article, (article) => article.user)
     articles : Article[]
 }

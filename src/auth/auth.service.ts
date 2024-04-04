@@ -34,7 +34,7 @@ export class AuthService {
                 const newUser =  this.userRepository.create({name, username, email, password: hashedPassword});
                 await this.userRepository.save(newUser);
 
-                return new ResponseBody(201, "new user created");
+                return new ResponseBody(201, "new user created","", true);
             } else {
                 throw new BadRequestException('All fields are compulsory')
             }
