@@ -61,9 +61,10 @@ export class ArticlesService {
 
 
   //todo image change
-  async updateArticle(articleId: string, payload: UpdateArticleDto, request: Request) {
+  async updateArticle(articleId: string, payload: UpdateArticleDto, request: Request, file : Express.Multer.File) {
     try {
       let userId = request['user'].id;
+      let updatedImage = file;
       const findArticle = await this.articleRepository.findOne({ where: { id: parseInt(articleId) }, select: { user: { id: true, name: true, username: true } }, 
       relations: ['user'], });
 
@@ -72,6 +73,12 @@ export class ArticlesService {
       if (!user) throw new UnauthorizedException('User not found')
 
       if (findArticle.user.id !== userId) throw new UnauthorizedException('You are not authorized to update this article');
+      if(updatedImage){
+        const cloudinaryData = await this.cloudinaryService.uploadImage(updatedImage.path);
+        await this.articleRepository.update({ id: parseInt(articleId) }, { ...findArticle, ...payload, image : { public_id : cloudinaryData.public_id, url : cloudinaryData.secure_url } })
+        fs.unlinkSync(updatedImage.path);
+        return new ResponseBody(201, 'Article updated successfully', findArticle);
+      }
 
       await this.articleRepository.update({ id: parseInt(articleId) }, { ...findArticle, ...payload })
       return new ResponseBody(201, 'Article updated successfully', findArticle);
