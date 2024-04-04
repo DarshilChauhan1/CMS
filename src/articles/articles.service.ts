@@ -32,13 +32,14 @@ export class ArticlesService {
 
       if (!content || !description || !title) throw new BadRequestException('All fields are required')
       let userId = request['user'].id;
+      console.log(userId);
       const user = await this.userRepository.findOne({ where: { id: userId }, select: selectedFields })
       if (!user) throw new NotFoundException('User not found')
 
       const cloudinaryData = await this.cloudinaryService.uploadImage(image.path);
 
       const newArticle = this.articleRepository.create({
-        author: user.name,
+        author : user.name,
         content,
         description,
         title,
@@ -48,6 +49,8 @@ export class ArticlesService {
         },
         user: user
       })
+
+      console.log(newArticle);
 
       await this.articleRepository.save(newArticle);
       fs.unlinkSync(image.path);
@@ -77,11 +80,11 @@ export class ArticlesService {
         const cloudinaryData = await this.cloudinaryService.uploadImage(updatedImage.path);
         await this.articleRepository.update({ id: parseInt(articleId) }, { ...findArticle, ...payload, image : { public_id : cloudinaryData.public_id, url : cloudinaryData.secure_url } })
         fs.unlinkSync(updatedImage.path);
-        return new ResponseBody(201, 'Article updated successfully', findArticle);
+        return new ResponseBody(201, 'Article updated successfully', {}, true);
       }
 
       await this.articleRepository.update({ id: parseInt(articleId) }, { ...findArticle, ...payload })
-      return new ResponseBody(201, 'Article updated successfully', findArticle);
+      return new ResponseBody(201, 'Article updated successfully ', {}, true);
     } catch (error) {
       throw error
     }
