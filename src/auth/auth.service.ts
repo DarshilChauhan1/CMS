@@ -19,31 +19,6 @@ export class AuthService {
         @InjectRepository(User) private readonly userRepository: Repository<User>) { }
 
     //Signup method for user password handled by pre hook
-    async signup(userPayload: SignupDto) {
-        try {
-            const { name, username, email, password } = userPayload;
-            if (username && email && password && name) {
-                //selected fields are from user entity without password
-                const existUser = await this.userRepository.findOne({where : [{username}, {email}], select : selectedFields});
-                console.log(existUser);
-                if (existUser) throw new ConflictException('User already exists');
-
-                //Hashing the password
-                const hashedPassword = await bcrypt.hash(password, 10);
-
-                const newUser =  this.userRepository.create({name, username, email, password: hashedPassword});
-                await this.userRepository.save(newUser);
-
-                return new ResponseBody(201, "new user created","", true);
-            } else {
-                throw new BadRequestException('All fields are compulsory')
-            }
-        } catch (error) {
-            console.log("Error---->", error)
-            throw error
-        }
-    }
-
     async login(userPayload: LoginDto) {
         try {
             const { username, password } = userPayload;

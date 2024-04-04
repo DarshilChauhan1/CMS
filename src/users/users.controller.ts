@@ -6,33 +6,45 @@ import { ExceptionHandling } from 'src/common/filters/exceptionHandling.filters'
 import { AuthGuard } from 'src/auth/auth.guard';
 
 
-@UseFilters(ExceptionHandling)
-@UseGuards(AuthGuard)
-@Controller('api/users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
 
+@Controller()
+export class UsersController {
+  constructor(private readonly usersService: UsersService) { }
+
+  //singup
+  @Post('signup')
+  signup(@Body() payload: CreateUserDto) {
+    return this.usersService.signup(payload)
+  }
   //get user profile
-  @Get('profile')
-  getProfile(@Req() request : Request){
+  @UseFilters(ExceptionHandling)
+  @UseGuards(AuthGuard)
+  @Get('api/users/profile')
+  getProfile(@Req() request: Request) {
     return this.usersService.getUserProfile(request);
   }
 
   //get all the user articles
-  @Get('articles')
-  getAllUserArticles(@Req() request : Request){
+  @UseFilters(ExceptionHandling)
+  @UseGuards(AuthGuard)
+  @Get('api/users/articles')
+  getAllUserArticles(@Req() request: Request) {
     return this.usersService.getAllUserArticles(request);
   }
 
   //user profile upadate
-  @Put('profile/:id')
-  upadteUserProfile(@Req() request : Request, @Body() payload : UpdateUserDto){
-    return this.usersService.upadteUserProfile(request, payload);
+  @UseFilters(ExceptionHandling)
+  @UseGuards(AuthGuard)
+  @Put('api/users/profile/:id')
+  upadteUserProfile (@Body() payload: UpdateUserDto, @Param('id') params: number) {
+    return this.usersService.upadteUserProfile(payload, params);
   }
 
   //user deletes his account
-  @Delete('profile/:id')
-  deleteUser(@Req() request : Request){
-    return this.usersService.deleteUser(request);
-  }  
+  @UseFilters(ExceptionHandling)
+  @UseGuards(AuthGuard)
+  @Delete('api/users/profile/:id')
+  deleteUser(@Param('id') params : number) {
+    return this.usersService.deleteUser(params);
+  }
 }

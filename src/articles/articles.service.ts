@@ -64,11 +64,11 @@ export class ArticlesService {
 
 
   //todo image change
-  async updateArticle(articleId: string, payload: UpdateArticleDto, request: Request, file : Express.Multer.File) {
+  async updateArticle(articleId: number, payload: UpdateArticleDto, request: Request, file : Express.Multer.File) {
     try {
       let userId = request['user'].id;
       let updatedImage = file;
-      const findArticle = await this.articleRepository.findOne({ where: { id: parseInt(articleId) }, select: { user: { id: true, name: true, username: true } }, 
+      const findArticle = await this.articleRepository.findOne({ where: { id: articleId }, select: { user: { id: true, name: true, username: true } }, 
       relations: ['user'], });
 
       if (!findArticle) throw new NotFoundException('No such article found');
@@ -78,32 +78,32 @@ export class ArticlesService {
       if (findArticle.user.id !== userId) throw new UnauthorizedException('You are not authorized to update this article');
       if(updatedImage){
         const cloudinaryData = await this.cloudinaryService.uploadImage(updatedImage.path);
-        await this.articleRepository.update({ id: parseInt(articleId) }, { ...findArticle, ...payload, image : { public_id : cloudinaryData.public_id, url : cloudinaryData.secure_url } })
+        await this.articleRepository.update({ id: articleId }, { ...findArticle, ...payload, image : { public_id : cloudinaryData.public_id, url : cloudinaryData.secure_url } })
         fs.unlinkSync(updatedImage.path);
         return new ResponseBody(201, 'Article updated successfully', {}, true);
       }
 
-      await this.articleRepository.update({ id: parseInt(articleId) }, { ...findArticle, ...payload })
+      await this.articleRepository.update({ id: articleId }, { ...findArticle, ...payload })
       return new ResponseBody(201, 'Article updated successfully ', {}, true);
     } catch (error) {
       throw error
     }
   }
 
-  async removeArticle(articleId : string, request : Request) {
+  async removeArticle(articleId : number, request : Request) {
     try {
       let userId = request['user'].id;
       const findUser = await this.userRepository.findOne({where : {id : userId}});
       //checking if the user exists
       if(!findUser) throw new NotFoundException('User not found');
       //fetching the article of the user
-      const findArticle = await this.articleRepository.findOne({where : {id : parseInt(articleId)}, select : {user : { id : true, username : true }}, relations : ['user']});
+      const findArticle = await this.articleRepository.findOne({where : {id : articleId}, select : {user : { id : true, username : true }}, relations : ['user']});
 
       if(!findArticle) throw new NotFoundException('No such article found');
 
       if(findArticle.user.id !== userId) throw new UnauthorizedException('You are not authorized to delete this article');
       //deleting the article
-      await this.articleRepository.delete({id : parseInt(articleId)});
+      await this.articleRepository.delete({id : articleId});
 
       return new ResponseBody(201, 'Article deleted successfully', findArticle);
     } catch (error) {

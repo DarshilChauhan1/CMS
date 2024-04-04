@@ -11,5 +11,6 @@ import { Article } from 'src/articles/entities/article.entity';
   imports : [TypeOrmModule.forFeature([User, Article]), JwtModule, ConfigModule.forRoot()],
   controllers: [UsersController],
   providers: [UsersService],
+  exports : [UsersService]
 })
 export class UsersModule {}

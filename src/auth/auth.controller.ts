@@ -11,11 +11,6 @@ import { ExceptionHandling } from 'src/common/filters/exceptionHandling.filters'
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  //signup
-  @Post('signup')
-  signupUser(@Body() payload : SignupDto){
-    return this.authService.signup(payload);
-  }
   //login
   @Post('login')
   loginUser(@Body() payload : LoginDto){
